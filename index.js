@@ -34,7 +34,46 @@ class betterDJS {
         if (member.roles.cache.has(role)) member.roles.remove(role).catch(e => { console.error(e); });
     };
 
+    async registerCommand(client, name, description, commandOptions, options) {
+        if (typeof name !== String) return new Error(`Invalid Command Name Variable Type: ${name} | Names must be a string.`);
+        if (typeof description !== String) return new Error(`Invalid Command Description Variable Type: ${description} | Description must be a string.`);
+        if (typeof commandOptions !== Array) return new Error(`Invalid Command Options Variable Type | commandOptions must be an array.`);
+        if (commandOptions.length > 25) return new Error(`Invalid commandOptions length. You may only provide up to 25 options per command.`);
+        let validOptions = true;
+        for (let option of commandOptions) {
+            let check = optionCheck(option);
+            if (check == false) validOptions = false;
+        };
+        if (validOptions == false) return new Error("Invalid Command Option. See the documentation on how to properly provide options.");
+        if (options.guild) {
+            let guild = await client.guilds.cache.get(options.guild);
+            if (!guild) return new Error(`Invalid Guild to assign command: ${options.guild} | Please make sure you have provided a correct guild ID that your application has access to.`);
+            guild.commands.create({
+                name: name,
+                description: description,
+                options: commandOptions
+            }).catch(e => console.error(e));
+        } else {
+            if (!client.application.owner) await client.application.fetch();
+            client.application.commands.create({
+                name: name,
+                description: description,
+                options: commandOptions
+            }).catch(e => console.error(e));
+        };
+    };
 
+};
+
+function optionCheck(option) {
+    if (typeof option !== Object) return false;
+    if (typeof option.name !== String) return false;
+    if (typeof option.type !== String) return false;
+    if (!["STRING", "USER", "CHANNEL", "ROLE", "MENTIONABLE", "BOOLEAN", "SUB_COMMAND_GROUP", "SUB_COMMAND", "NUMBER"].includes(option.type)) return false;
+    if (option.required) {
+        if (typeof option.required !== Boolean) return false;
+    };
+    return true;
 };
 
 module.exports = betterDJS;
