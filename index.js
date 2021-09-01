@@ -1,4 +1,5 @@
 const discord_permission = ["CREATE_INSTANT_INVITE", "KICK_MEMBERS", "BAN_MEMBERS", "ADMINISTRATOR", "MANAGE_CHANNELS", "MANAGE_GUILD", "ADD_REACTIONS", "VIEW_AUDIT_LOG", "PRIORITY_SPEAKER", "STREAM", "VIEW_CHANNEL", "SEND_MESSAGES", "SEND_TTS_MESSAGES", "MANAGE_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "READ_MESSAGE_HISTORY", "MENTION_EVERYONE", "USE_EXTERNAL_EMOJIS", "VIEW_GUILD_INSIGHTS", "CONNECT", "SPEAK", "MUTE_MEMBERS", "DEAFEN_MEMBERS", "MOVE_MEMBERS", "USE_VAD", "CHANGE_NICKNAME", "MANAGE_NICKNAMES", "MANAGE_ROLES", "MANAGE_WEBHOOKS", "MANAGE_EMOJIS", "NONE"];
+const util = require("./src/functions");
 class betterDJS {
     constructor(client) {
         this.client = client;
@@ -34,6 +35,7 @@ class betterDJS {
         if (member.roles.cache.has(role)) member.roles.remove(role).catch(e => { console.error(e); });
     };
 
+    //options guild: guild ID
     async registerCommand(client, name, description, commandOptions, options) {
         if (typeof name !== String) return new Error(`Invalid Command Name Variable Type: ${name} | Names must be a string.`);
         if (typeof description !== String) return new Error(`Invalid Command Description Variable Type: ${description} | Description must be a string.`);
@@ -41,7 +43,7 @@ class betterDJS {
         if (commandOptions.length > 25) return new Error(`Invalid commandOptions length. You may only provide up to 25 options per command.`);
         let validOptions = true;
         for (let option of commandOptions) {
-            let check = optionCheck(option);
+            let check = util.optionCheck(option);
             if (check == false) validOptions = false;
         };
         if (validOptions == false) return new Error("Invalid Command Option. See the documentation on how to properly provide options.");
@@ -63,17 +65,30 @@ class betterDJS {
         };
     };
 
-};
-
-function optionCheck(option) {
-    if (typeof option !== Object) return false;
-    if (typeof option.name !== String) return false;
-    if (typeof option.type !== String) return false;
-    if (!["STRING", "USER", "CHANNEL", "ROLE", "MENTIONABLE", "BOOLEAN", "SUB_COMMAND_GROUP", "SUB_COMMAND", "NUMBER"].includes(option.type)) return false;
-    if (option.required) {
-        if (typeof option.required !== Boolean) return false;
+    // Guild option
+    async deleteCommand(client, name, guild) {
+        if (guild) {
+            let guild = await client.guilds.cache.get(guild);
+            if (!guild) return new Error("Invalid Guild.");
+            guild.commands.fetch().then(commands => {
+                for (let command of commands) {
+                    if (command.name == name) {
+                        guild.commands.delete(command.id);
+                    };
+                };
+            });
+        } else {
+            if (!client.application.owner) await client.application.fetch();
+            client.applications.commands.fetch().then(commands => {
+                for (let command of commands) {
+                    if (command.name == name) {
+                        client.applications.commands.delete(command.id);
+                    };
+                };
+            });
+        };
     };
-    return true;
+
 };
 
 module.exports = betterDJS;
