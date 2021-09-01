@@ -1,14 +1,14 @@
-<h1 align="center">discord.js-utilitys</h1>
+<h1 align="center">djs-better</h1>
 <br></br>
 
-## 📃 | Usage
+## Usage
 ```js
 const { Client } = require('discord.js');
 const djs = require(`djs-better`);
 const client = new Client();
 
 // Method 1
-client.utils = new utils(client);
+client.utils = new djs(client);
 // Method 2
 const tools = new djs(client);
 ```
