@@ -65,10 +65,10 @@ class betterDJS {
         };
     };
 
-    // Guild option
+    // guild option
     async deleteCommand(client, name, guild) {
         if (guild) {
-            let guild = await client.guilds.cache.get(guild);
+            guild = await client.guilds.cache.get(guild);
             if (!guild) return new Error("Invalid Guild.");
             guild.commands.fetch().then(commands => {
                 for (let command of commands) {
@@ -87,6 +87,23 @@ class betterDJS {
                 };
             });
         };
+    };
+    // guild option
+    async deleteAllCommands(client, guild) {
+        if (guild) {
+            guild = client.guilds.cache.get(guild);
+            if (!guild) return new Error("Invalid Guild.");
+            let commands = await guild.application.commands.fetch();
+            for (let command of commands) {
+                guild.application.commands.delete(command.id);
+            };
+        } else {
+            if (!client.application.owner) await client.application.fetch();
+            let commands = await client.application.commands.fetch();
+            for (let command of commands) {
+                client.application.commands.delete(command.id);
+            };
+        }
     };
 
 };
