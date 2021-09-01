@@ -1,6 +1,6 @@
 {
     "name": "djs-better",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "A NPM Module that utilizes the latest discord.js version and makes it user friendly to users that don't fully understand or want to go through the hassle of discord.js",
     "main": "index.js",
     "scripts": {
