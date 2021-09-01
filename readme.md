@@ -36,7 +36,7 @@ const tools = new djs(client);
 * [Discord.js@13.1.0](https://npmjs.com/package/discord.js)
 
 ## Examples
-To see examples go to [examples.js](https://github.com/braxtongpoll/better-djs/main/examples.js)
+To see examples go to [examples.js](https://github.com/braxtongpoll/better-djs/blob/main/src/examples.js)
 
 ## Contact 
 * [Discord](https://plutothe.dev/discord)
